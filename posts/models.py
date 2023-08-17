@@ -20,7 +20,7 @@ class Post(models.Model):
         upload_to='images/', default='../https://res.cloudinary.com/dlyj7sjwz/image/upload/v1685982356/samples/ecommerce/car-interior-design.jpg', blank=True
     )
     image_filter = models.CharField(
-        max_lenght=32, choices=image_filter_choices, default='normal'
+        max_length=32, choices=image_filter_choices, default='normal'
     )
 
     class Meta:
