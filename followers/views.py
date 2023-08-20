@@ -1,7 +1,7 @@
 from rest_framework import generics, permissions
 from .models import Follower
 from .serializers import FollowerSerializer
-from .permissions import IsOwnerOrReadOnly
+from social_api.permissions import IsOwnerOrReadOnly
 
 class FollowerList(generics.ListCreateAPIView):
     serializer_class = FollowerSerializer
