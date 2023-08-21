@@ -4,9 +4,6 @@ from social_api.permissions import IsOwnerOrReadOnly
 from .models import Post
 from .serializers import PostSerializer
 
-
-
-
 class PostList(generics.ListCreateAPIView):
     """
     List posts or create a post if logged in
@@ -15,17 +12,25 @@ class PostList(generics.ListCreateAPIView):
     serializer_class = PostSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     queryset = Post.objects.annotate(
-        comments_count=Count('comments', distinct=True),
-        likes_count=Count('likes', distinct=True)
+        likes_count=Count('likes', distinct=True),
+        comments_count=Count('comment', distinct=True)
     ).order_by('-created_at')
-    serializer_class = PostSerializer
-    filter_backends = [filters.OrderingFilter]
-    ordering_fields = ['comments_count', 'likes_count', 'likes__created_at']
+    filter_backends = [
+        filters.OrderingFilter,
+        filters.SearchFilter,
+    ]
+    search_fields = [
+        'owner__username',
+        'title',
+    ]
+    ordering_fields = [
+        'likes_count',
+        'comments_count',
+        'likes__created_at',
+    ]
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
-
-
 class PostDetail(generics.RetrieveUpdateDestroyAPIView):
     """
     Retrieve a post and edit or delete it if you own it.
@@ -33,19 +38,6 @@ class PostDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = PostSerializer
     permission_classes = [IsOwnerOrReadOnly]
     queryset = Post.objects.annotate(
-        comments_count=Count('comments', distinct=True),
-        likes_count=Count('likes', distinct=True)
+        likes_count=Count('likes', distinct=True),
+        comments_count=Count('comment', distinct=True)
     ).order_by('-created_at')
-    serializer_class = PostSerializer
-    filter_backends = [filters.OrderingFilter]
-    ordering_fields = ['comments_count', 'likes_count', 'likes__created_at']
-
-class PostFilter(django_filters.FilterSet):
-    comments_count = django_filters.NumberFilter(field_name='comments_count')
-    likes_count = django_filters.NumberFilter(field_name='likes_count')
-    likes__created_at = django_filters.DateTimeFilter(field_name='likes__created_at')
-
-    class Meta:
-        model = Post
-        fields = []
-

@@ -3,6 +3,7 @@ from social_api.permissions import IsOwnerOrReadOnly
 from .models import Comment
 from .serializers import CommentSerializer, CommentDetailSerializer
 
+# Create your views here.
 
 class CommentList(generics.ListCreateAPIView):
     """
@@ -23,4 +24,3 @@ class CommentDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsOwnerOrReadOnly]
     serializer_class = CommentDetailSerializer
     queryset = Comment.objects.all()
-    
