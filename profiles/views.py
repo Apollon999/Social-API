@@ -17,7 +17,11 @@ class ProfileList(generics.ListAPIView):
     ).order_by('created_at')
     serializer_class = ProfileSerializer
     filter_backends = [
-        filters.OrderingFilter
+        filters.OrderingFilter,
+        DjangoFilterBackend,
+    ]
+    filterset_fields = [
+        'owner__following__followed__profile',
     ]
     ordering_fields = [
         'posts_count',
